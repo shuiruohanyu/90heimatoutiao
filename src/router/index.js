@@ -17,6 +17,9 @@ const routes = [
     children: [{
       path: '', // 二级路由地址什么都不写  代表二级路由默认的组件
       component: Home2
+    }, {
+      path: 'comment', // 完整 相对
+      component: () => import('../views/comment')
     }]
   }, {
     path: '/login',

@@ -2,6 +2,7 @@
 import axios from 'axios'
 import router from '../router'
 import { Message } from 'element-ui'
+import JSONBig from 'json-bigint' // 引入第三方的包
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0' // 设置一个常态值
 
 // 请求拦截器
@@ -15,6 +16,11 @@ axios.interceptors.request.use(function (config) {
   // 执行请求错误
 
 })
+
+axios.defaults.transformResponse = [function (data) {
+  return JSONBig.parse(data) // 解决js处理大数字失真问题
+}]
+
 // 响应拦截器
 axios.interceptors.response.use(function (response) {
   // 成功时执行该函数 状态码 200 /201 /204
@@ -44,5 +50,7 @@ axios.interceptors.response.use(function (response) {
       break
   }
   Message({ type: 'warning', message }) // 提示信息
+  // 这里需要注意 错误执行函数 如果不做任何操作 还会进入到promise then中
+  return Promise.reject(error) // 只要reject =>catch
 })
 export default axios

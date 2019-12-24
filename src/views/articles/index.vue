@@ -63,6 +63,14 @@
               <span><i class="el-icon-delete"></i>删除</span>
           </div>
       </div>
+      <el-row type='flex' justify="center" align="middle" style="height:60px">
+          <el-pagination  background layout="prev, pager, next"
+          :total="page.total"
+          :current-page="page.currentPage"
+          :page-size="page.pageSize"
+          @current-change="changePage"
+          ></el-pagination>
+      </el-row>
   </el-card>
 </template>
 
@@ -77,7 +85,12 @@ export default {
       },
       channels: [], // 接收频道数据
       list: [],
-      defaultImg: require('../../assets/img/default.jpg') // 默认图片
+      defaultImg: require('../../assets/img/default.jpg'), // 默认图片
+      page: {
+        currentPage: 1,
+        pageSize: 10, // 黑马头条后端限制 最低10条 => 文章列表
+        total: 0
+      }
     }
   },
   watch: {
@@ -124,9 +137,20 @@ export default {
     }
   },
   methods: {
+    //   改变页码方法
+    changePage (newPage) {
+      this.page.currentPage = newPage // 最新页码
+      this.getConditionArticle() // 调用获取文章数据
+    },
     //   改变条件
     changeCondition () {
+      this.page.currentPage = 1 // 强制将页码重置第一页
+      this.getConditionArticle() // 调用获取文章数据
+    },
+    getConditionArticle () {
       let params = {
+        page: this.page.currentPage,
+        per_page: this.page.pageSize,
         status: this.searchForm.status === 5 ? null : this.searchForm.status, // 因为5是前端定义的一个标识, 如果等于5 表示查全部, 全部应该什么都不传 直接传null
         channel_id: this.searchForm.channel_id,
         begin_pubdate: this.searchForm.dateRange.length ? this.searchForm.dateRange[0] : null, // 开始时间
@@ -149,12 +173,13 @@ export default {
         params
       }).then(result => {
         this.list = result.data.results // 获取文章列表数据
+        this.page.total = result.data.total_count // 总数
       })
     }
   },
   created () {
     this.getChannels() // 获取文章数据
-    this.getArticles() // 获取文章列表数据
+    this.getArticles({ page: 1, per_page: 10 }) // 获取文章列表数据
   }
 }
 </script>

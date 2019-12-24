@@ -26,6 +26,9 @@ const routes = [
     }, {
       path: 'articles', // 文章列表
       component: () => import('../views/articles')
+    }, {
+      path: 'publish',
+      component: () => import('../views/publish')
     }]
   }, {
     path: '/login',

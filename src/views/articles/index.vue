@@ -59,7 +59,7 @@
           </div>
           <!-- 右侧 -->
           <div class='right'>
-              <span><i class="el-icon-edit"></i>修改</span>
+              <span @click="toModify(item.id)"><i class="el-icon-edit"></i>修改</span>
               <!-- 注册删除按钮事件 -->
               <span @click="delMaterial(item.id)"><i class="el-icon-delete"></i>删除</span>
           </div>
@@ -76,6 +76,11 @@
 </template>
 
 <script>
+/******
+ * author gaoly
+ * created by 2019-12-21
+ * modify  by liun
+ * ********/
 export default {
   data () {
     return {
@@ -138,6 +143,10 @@ export default {
     }
   },
   methods: {
+    // 去修改页面 => 实际上就是发布页面
+    toModify (id) {
+      this.$router.push(`/home/publish/${id.toString()}`)
+    },
     // 删除文章
     delMaterial (id) {
       this.$confirm('是否要删除该文章?').then(() => {

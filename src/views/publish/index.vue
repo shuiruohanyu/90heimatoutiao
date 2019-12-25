@@ -17,13 +17,14 @@
                 ></quill-editor>
           </el-form-item>
           <el-form-item style="margin-top:120px"  prop="cover" label="封面">
-              <el-radio-group v-model="formData.cover.type">
+              <el-radio-group  v-model="formData.cover.type">
                   <!-- // 封面类型 -1:自动，0-无图，1-1张，3-3张 -->
                   <el-radio :label="1">单图</el-radio>
                   <el-radio :label="3">三图</el-radio>
                   <el-radio :label="0">无图</el-radio>
                   <el-radio :label="-1">自动</el-radio>
               </el-radio-group>
+              {{ formData.cover }}
           </el-form-item>
           <el-form-item prop="channel_id" label="频道">
               <el-select v-model="formData.channel_id">
@@ -86,6 +87,16 @@ export default {
           },
           channel_id: null // 频道id
         }
+      }
+    },
+    // 监听 封面类型的改变
+    'formData.cover.type': function () {
+      if (this.formData.cover.type === 0 || this.formData.cover.type === -1) {
+        this.formData.cover.images = [] // 无图或者自动
+      } else if (this.formData.cover.type === 1) {
+        this.formData.cover.images = [''] // 单图
+      } else if (this.formData.cover.type === 3) {
+        this.formData.cover.images = ['', '', ''] // 3图
       }
     }
   },

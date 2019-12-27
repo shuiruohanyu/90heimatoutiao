@@ -32,6 +32,9 @@ const routes = [
     }, {
       path: 'publish/:articleId', // 修改文章
       component: () => import('../views/publish')
+    }, {
+      path: 'account',
+      component: () => import('../views/account')
     }]
   }, {
     path: '/login',

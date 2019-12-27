@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
       <bread-crumb slot="header">
         <template slot='title'>账户信息</template>
       </bread-crumb>
@@ -22,7 +22,7 @@
            </el-form-item>
       </el-form>
       <!-- 上传组件 -->
-      <el-upload class='head-upload' action="" :show-file-list="false">
+      <el-upload :http-request="uploadImg" class='head-upload' action="" :show-file-list="false">
           <img :src="formData.photo ? formData.photo : defaultImg" alt="">
       </el-upload>
   </el-card>
@@ -32,6 +32,7 @@
 export default {
   data () {
     return {
+      loading: false,
       formData: {
         name: '', // 用户名
         intro: '', // 简介
@@ -54,6 +55,19 @@ export default {
     }
   },
   methods: {
+    uploadImg (params) {
+      this.loading = true // 打开弹层
+      let data = new FormData()
+      data.append('photo', params.file)
+      this.$axios({
+        url: '/user/photo',
+        method: 'patch',
+        data
+      }).then(result => {
+        this.loading = false // 关闭弹层
+        this.formData.photo = result.data.photo // 给当前的头像赋值
+      })
+    },
     //   获取用户个人信息
     getUserInfo () {
       this.$axios({

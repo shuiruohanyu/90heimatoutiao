@@ -18,8 +18,8 @@
         <!-- 生成页面结构 -->
         <div class="img-list">
           <!-- v-for对数据进行遍历 -->
-          <el-card class="img-card" v-for="item in list" :key="item.id">
-            <img :src="item.url" alt />
+          <el-card class="img-card" v-for="(item,index) in list" :key="item.id">
+            <img @click="openDialog(index)" :src="item.url" alt />
             <el-row class="operate" type="flex" align="middle" justify="space-around">
               <!-- 需要根据当前是否收藏的状态来决定 是否给字体颜色 -->
               <i @click="collectOrCancel(item)" :style="{ color: item.is_collected ? 'red' : '#000' }" class="el-icon-star-on"></i>
@@ -32,7 +32,7 @@
         <div class="img-list">
           <!-- v-for对数据进行遍历 -->
           <el-card class="img-card" v-for="item in list" :key="item.id">
-            <img :src="item.url" alt />
+            <img @click="openDialog(index)" :src="item.url" alt />
           </el-card>
         </div>
       </el-tab-pane>
@@ -48,6 +48,13 @@
         layout="prev, pager, next"
       ></el-pagination>
     </el-row>
+    <el-dialog @opened="openEnd" :visible="dialogVisible" @close="dialogVisible = false">
+       <el-carousel ref="myCarosel" indicator-position="outside" height="500px">
+         <el-carousel-item v-for="(item,index) in list" :key="index">
+           <img style="width:100%;height:100%" :src="item.url" alt="">
+       </el-carousel-item>
+      </el-carousel>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -55,6 +62,7 @@
 export default {
   data () {
     return {
+      dialogVisible: false, // 弹层显示隐藏
       loading: false,
       activeName: 'all', // 当前选中的标签
       list: [], // 接收素材数据
@@ -62,10 +70,21 @@ export default {
         currentPage: 1,
         pageSize: 8,
         total: 0
-      }
+      },
+      clickIndex: -1 // 点击的index
     }
   },
   methods: {
+    openEnd () {
+      // 此时已经可以获取走马灯实例了 ref
+      this.$refs.myCarosel.setActiveItem(this.clickIndex)
+    },
+    // 打开弹层
+    openDialog (index) {
+      this.dialogVisible = true // dialog是懒加载 => 第一次没有弹出之前 是没有组件元素的
+      // 没有办法在弹层中立刻做设置索引
+      this.clickIndex = index // 存储一下 点击索引
+    },
     // 删除用户图片素材
     delMaterial (id) {
       this.$confirm('你确定要删除此图片吗?').then(() => {

@@ -11,6 +11,10 @@ const routes = [
     redirect: '/home' // 强制跳转
   },
   {
+    path: '*',
+    component: () => import('../views/404')
+  },
+  {
     path: '/home',
     name: 'home',
     component: Home,

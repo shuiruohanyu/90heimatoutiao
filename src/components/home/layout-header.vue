@@ -3,7 +3,7 @@
   <el-row class='layout-header' type='flex' align="middle">
       <!-- 先定义一行 -->
      <el-col class='left' :span="12">
-         <i class='el-icon-s-fold'></i>
+         <i @click="collapseOrOpen" :class="{'el-icon-s-unfold': collapse,'el-icon-s-fold': !collapse}"></i>
          <span>江苏传智播客教育科技股份有限公司</span>
      </el-col>
      <el-col class='right' :span="12">
@@ -30,6 +30,7 @@ import eventBus from '../../utils/eventBus'
 export default {
   data () {
     return {
+      collapse: false, // 默认是展开
       userInfo: {}, // 定义一个用户对象
       defaultImg: require('../../assets/img/header.jpg') // 先将图片转化成了一个变量
     }
@@ -43,6 +44,11 @@ export default {
     })
   },
   methods: {
+    // 折叠或者 展开
+    collapseOrOpen () {
+      this.collapse = !this.collapse // 不是展开就是折叠
+      eventBus.$emit('changeCollapse') // 触发一个事件
+    },
     getUserInfo () {
       this.$axios({
         url: '/user/profile'

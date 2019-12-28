@@ -81,6 +81,7 @@
  * created by 2019-12-21
  * modify  by liun
  * ********/
+import { getArticles, getChannels } from '../../actions/articles'
 export default {
   data () {
     return {
@@ -189,17 +190,12 @@ export default {
     },
     //   获取所有的频道
     async getChannels () {
-      let result = await this.$axios({
-        url: '/channels'
-      })
+      let result = await getChannels()
       this.channels = result.data.channels
     },
     // 获取文章列表数据
     async  getArticles (params) {
-      let result = await this.$axios({
-        url: '/articles',
-        params
-      })
+      let result = await getArticles() // 调用获取文章模块
       this.list = result.data.results // 获取文章列表数据
       this.page.total = result.data.total_count // 总数
     }

@@ -86,42 +86,38 @@ export default {
       this.clickIndex = index // 存储一下 点击索引
     },
     // 删除用户图片素材
-    delMaterial (id) {
-      this.$confirm('你确定要删除此图片吗?').then(() => {
-        this.$axios({
-          method: 'delete',
-          url: `/user/images/${id}`
-        }).then(() => {
-          this.getMaterial() // 重新拉取数据
-        })
+    async delMaterial (id) {
+      await this.$confirm('你确定要删除此图片吗?')
+      await this.$axios({
+        method: 'delete',
+        url: `/user/images/${id}`
       })
+      this.getMaterial() // 重新拉取数据
     },
     // 取消或者收藏
-    collectOrCancel (item) {
+    async collectOrCancel (item) {
       // item.iscollected true => 取消收藏 ? 收藏
-      this.$axios({
+      await this.$axios({
         method: 'put',
         url: `/user/images/${item.id}`,
         data: {
           collect: !item.is_collected // 取反 因为 收藏  =>取消收藏
         }
-      }).then(result => {
-        this.getMaterial() // 重新拉取数据
       })
+      this.getMaterial() // 重新拉取数据
     },
     // 上传图片方法
-    uploadImg (params) {
+    async uploadImg (params) {
       this.loading = true // 先弹个层
       let data = new FormData()
       data.append('image', params.file) // 文件加入到参数中
-      this.$axios({
+      await this.$axios({
         method: 'post',
         url: '/user/images',
         data
-      }).then(result => {
-        this.loading = false // 关闭弹层
-        this.getMaterial() // 直接调用拉取数据的方法
       })
+      this.loading = false // 关闭弹层
+      this.getMaterial() // 直接调用拉取数据的方法
     },
     // 改变页码方法
     changePage (newPage) {
@@ -134,18 +130,17 @@ export default {
       this.getMaterial() // 调用获取数据方法
     },
     // 获取素材的方法
-    getMaterial () {
-      this.$axios({
+    async getMaterial () {
+      let result = await this.$axios({
         url: '/user/images',
         params: {
           page: this.page.currentPage,
           per_page: this.page.pageSize,
           collect: this.activeName === 'collect' // 传false是获取所有的数据 传true是获取收藏数据
         }
-      }).then(result => {
-        this.list = result.data.results // 获取图片数据 有可能是 全部 也由可能是收藏
-        this.page.total = result.data.total_count // 总条数
       })
+      this.list = result.data.results // 获取图片数据 有可能是 全部 也由可能是收藏
+      this.page.total = result.data.total_count // 总条数
     }
   },
   created () {

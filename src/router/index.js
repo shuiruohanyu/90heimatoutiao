@@ -35,6 +35,9 @@ const routes = [
     }, {
       path: 'account',
       component: () => import('../views/account')
+    }, {
+      path: 'picture',
+      component: () => import('../views/picture')
     }]
   }, {
     path: '/login',

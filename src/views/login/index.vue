@@ -40,11 +40,11 @@ export default {
       },
       loginRules: {
         // 验证规则对象 key(字段名):value(规则 => [])
-        mobile: [{ required: true, message: '请输入您的手机号' }, {
-          pattern: /^1[3456789]\d{9}$/, message: '手机号格式不正确'
+        mobile: [{ required: true, message: '请输入您的手机号', trigger: 'blur' }, {
+          pattern: /^1[3456789]\d{9}$/, message: '手机号格式不正确', trigger: 'blur'
         }],
-        code: [{ required: true, message: '请输入你的验证码' }, {
-          pattern: /^\d{6}$/, message: '验证码格式不正确'
+        code: [{ required: true, message: '请输入你的验证码', trigger: 'blur' }, {
+          pattern: /^\d{6}$/, message: '验证码格式不正确', trigger: 'blur'
         }],
         check: [{ validator: function (rule, value, callback) {
           // 自定义校验函数
@@ -91,15 +91,27 @@ export default {
 
 <style lang='less' scoped>
   .login  {
-    background-image: url('../../assets/img/back.jpg');
     height: 100vh;
-    background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
+    &:before {
+     background-image: url('../../assets/img/back.jpg');
+     background-size: cover;
+     filter: blur(10px);
+     content: '';
+     width:100%;
+     height: 100%;
+     left:0;
+     top:0;
+     position: absolute;
+
+    }
     .login-card {
       width: 440px;
       height: 350px;
+      z-index: 2;
+      background-color: transparent;
       .title {
         text-align: center;
         margin-bottom: 30px;

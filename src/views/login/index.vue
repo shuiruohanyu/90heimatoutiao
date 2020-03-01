@@ -49,7 +49,7 @@ export default {
         check: [{ validator: function (rule, value, callback) {
           // 自定义校验函数
           // rule 规则 没啥用
-          // value 要校验的字段的值
+          // value 要校验的字段的  值
           // callback 是一个回调函数
           if (value) {
             // 认为已经勾选

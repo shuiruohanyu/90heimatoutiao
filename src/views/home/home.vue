@@ -1,9 +1,5 @@
 <template>
- <el-carousel height="500px" type="card" :interval="5000" arrow="always">
-    <el-carousel-item  v-for="item in list" :key="item">
-      <img :src="item" alt="">
-    </el-carousel-item>
-  </el-carousel>
+ <WriteCard />
 </template>
 
 <script>

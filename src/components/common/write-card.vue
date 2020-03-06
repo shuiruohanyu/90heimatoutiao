@@ -66,10 +66,18 @@ export default {
       this.clearCanvas()
       if (!this.drawFlag) {
         var func = () => {
-          let p = this.list.shift(0)
-          this.CanvasObj.moveTo(p.x, p.y)
+          if (this.list.length) {
+            let p = this.list.shift()
+            // this.CanvasObj.moveTo(p.x, p.y)
+            this.CanvasObj.lineTo(p.x, p.y)
+            this.CanvasObj.stroke()
+          } else {
+            clearInterval(this.drawFlag)
+            this.drawFlag = null
+          }
         }
-        setInterval(func, 1000)
+        this.drawFlag = setInterval(func, 1000)
+        this.CanvasObj.beginPath() // 开始画画
       }
     },
     reset () {

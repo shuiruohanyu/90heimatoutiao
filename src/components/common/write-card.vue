@@ -3,6 +3,8 @@
    <el-card style='width:400px; height: 200px'>
        <canvas @mousedown.stop="beginDraw" @mousemove.stop="movePoint" @mouseup.stop="endDraw" ref="myCanvas" style="width:100%;height:160px;border: 2px solid #ccc"></canvas>
    </el-card>
+    <el-button @click="review" type='primary'>重放</el-button>
+     <el-button @click="reset" > 清除</el-button>
  </el-row>
 </template>
 
@@ -22,7 +24,8 @@ export default {
   methods: {
     //  清空画布
     clearCanvas () {
-
+      this.CanvasObj.fillStyle = '#fff'
+      this.CanvasObj.fillRect(0, 0, '400', '200')
     },
     // 开始下笔
     beginDraw (event) {
@@ -37,9 +40,9 @@ export default {
       this.CanvasObj.beginPath() // 开始画了
       this.CanvasObj.lineWidth = 2
       this.CanvasObj.strokeStyle = 'red'
-      this.pointX = event.offsetX
-      this.pointY = event.offsetY
-      this.list.push({ x: event.offsetX, y: event.offsetY })
+      this.pointX = event.offsetX - 10
+      this.pointY = event.offsetY - 10
+      this.list.push({ x: this.pointX, y: event.offsetY })
     },
     // 移动点
     movePoint (event) {
@@ -47,10 +50,10 @@ export default {
         console.log('画画中')
         //  只有开始画了 才在移动的时候做点
         this.CanvasObj.moveTo(this.pointX, this.pointY)
-        this.CanvasObj.lineTo(event.offsetX, event.offsetY)
+        this.CanvasObj.lineTo(event.offsetX - 10, event.offsetY - 10)
 
-        this.pointX = event.offsetX
-        this.pointY = event.offsetY
+        this.pointX = event.offsetX - 10
+        this.pointY = event.offsetY - 10
         this.CanvasObj.stroke() // 绘制路径
       }
     },
@@ -58,6 +61,19 @@ export default {
     endDraw () {
       this.isDraw = false
       console.log('结束画画')
+    },
+    review () {
+      this.clearCanvas()
+      if (!this.drawFlag) {
+        var func = () => {
+          let p = this.list.shift(0)
+          this.CanvasObj.moveTo(p.x, p.y)
+        }
+        setInterval(func, 1000)
+      }
+    },
+    reset () {
+      this.clearCanvas()
     }
 
   }

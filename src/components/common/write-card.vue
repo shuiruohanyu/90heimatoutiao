@@ -1,14 +1,25 @@
 <template>
- <el-row style="height:300px;" type='flex' justify="center" align="middle">
-   <el-card style='width:400px; height: 200px'>
-       <canvas @mousedown.stop="beginDraw" @mousemove.stop="movePoint" @mouseup.stop="endDraw" ref="myCanvas" style="width:100%;height:160px;border: 2px solid #ccc"></canvas>
+ <el-row style="height:600px;position:relative" type='flex' justify="center" align="middle">
+   <el-card style='width:500px; height: 400px'>
+       <canvas width="448" height="360" style="width:100%;height:360px;border: 2px solid #ccc" @mousedown.stop="beginDraw" @mousemove.stop="movePoint" @mouseup.stop="endDraw" ref="myCanvas" ></canvas>
    </el-card>
-    <el-button @click="review" type='primary'>重放</el-button>
-     <el-button @click="reset" > 清除</el-button>
+    <div class='right'>
+     <el-button size="mini" @click="drawLine">直线</el-button>
+     <el-button size="mini" @click="drawCurve">曲线</el-button>
+     <el-button size="mini" >圆</el-button>
+     <el-button size="mini" >矩形</el-button>
+     <el-button size="mini" >画笔</el-button>
+     <el-button size="mini" @click="review" >动画</el-button>
+     <el-button size="mini" @click="reset" >擦除</el-button>
+     <el-button size="mini" @click="saveHeader">变成头像</el-button>
+    </div>
+
  </el-row>
 </template>
 
 <script>
+import eventBus from '@/utils/eventBus'
+
 export default {
   data () {
     return {
@@ -22,44 +33,80 @@ export default {
     this.CanvasObj = this.$refs.myCanvas.getContext('2d') // 画布对象
   },
   methods: {
+    drawLine () {
+      window.cancelAnimationFrame(this.loadingAnimate)
+
+      this.list = []
+      this.clearCanvas()
+      let length = 200 // 画一个长度为300的坐标点
+      let startX = 20 // 起始坐标X
+      let startY = 20 // 起始坐标Y
+      let linePointList = Array.from(Array(length), (v, k) => ({ x: startX + k, y: startY }))
+      let func = () => {
+        if (linePointList.length) {
+          let p = linePointList.shift()
+          this.CanvasObj.lineTo(p.x, p.y)
+          this.CanvasObj.stroke()
+          this.loadingAnimate = window.requestAnimationFrame(func) // 重新调用
+        }
+      }
+      window.requestAnimationFrame(func)
+      this.CanvasObj.beginPath()
+      this.CanvasObj.moveTo(startX, startY)
+    },
+    // 画贝塞尔曲线
+    drawCurve () {
+      window.cancelAnimationFrame(this.loadingAnimate)
+      this.list = []
+      this.clearCanvas()
+      // let length = 200 // 画一个长度为300的坐标点
+      let startX = 20 // 起始坐标X
+      let startY = 20 // 起始坐标Y
+      this.CanvasObj.beginPath()
+      this.CanvasObj.moveTo(startX, startY)
+      this.CanvasObj.quadraticCurveTo(20, 100, 200, 20)
+      this.CanvasObj.stroke()
+    },
     //  清空画布
     clearCanvas () {
       this.CanvasObj.fillStyle = '#fff'
-      this.CanvasObj.fillRect(0, 0, '400', '200')
+      this.CanvasObj.fillRect(0, 0, '500', '400')
     },
     // 开始下笔
     beginDraw (event) {
       console.log('开始画画')
-      //        this.CanvasObj.beginPath()
-      // this.CanvasObj.moveTo(20, 20)
-      // this.CanvasObj.lineTo(20, 100)
-      // this.CanvasObj.lineTo(70, 100)
-      // this.CanvasObj.strokeStyle = 'green'
-      // this.CanvasObj.stroke()
       this.isDraw = true
       this.CanvasObj.beginPath() // 开始画了
-      this.CanvasObj.lineWidth = 2
+      this.CanvasObj.lineWidth = 1
       this.CanvasObj.strokeStyle = 'red'
-      this.pointX = event.offsetX - 10
-      this.pointY = event.offsetY - 10
-      this.list.push({ x: this.pointX, y: event.offsetY })
+      this.pointX = event.offsetX
+      this.pointY = event.offsetY
+      this.list.push({ x: this.pointX, y: this.pointY, begin: true })
+
+      var bbox = this.$refs.myCanvas.getBoundingClientRect()
+      console.log(bbox)
+      console.log(this.$refs.myCanvas.width)
+      console.log(this.$refs.myCanvas.height)
     },
     // 移动点
     movePoint (event) {
       if (this.isDraw) {
+        console.log(event)
         console.log('画画中')
         //  只有开始画了 才在移动的时候做点
         this.CanvasObj.moveTo(this.pointX, this.pointY)
-        this.CanvasObj.lineTo(event.offsetX - 10, event.offsetY - 10)
-
-        this.pointX = event.offsetX - 10
-        this.pointY = event.offsetY - 10
+        this.CanvasObj.lineTo(event.offsetX, event.offsetY)
+        this.list.push({ x: event.offsetX, y: event.offsetY })
         this.CanvasObj.stroke() // 绘制路径
+        this.pointX = event.offsetX
+        this.pointY = event.offsetY
       }
     },
     // 画完
-    endDraw () {
+    endDraw (event) {
       this.isDraw = false
+      this.list.push({ x: event.offsetX, y: event.offsetY, close: true })
+
       console.log('结束画画')
     },
     review () {
@@ -68,26 +115,62 @@ export default {
         var func = () => {
           if (this.list.length) {
             let p = this.list.shift()
-            // this.CanvasObj.moveTo(p.x, p.y)
+            if (p.begin) {
+              this.CanvasObj.beginPath()
+            }
             this.CanvasObj.lineTo(p.x, p.y)
             this.CanvasObj.stroke()
+            this.drawFlag = window.requestAnimationFrame(func)
+            if (p.close) {
+              this.CanvasObj.closePath()
+            }
           } else {
-            clearInterval(this.drawFlag)
             this.drawFlag = null
           }
         }
-        this.drawFlag = setInterval(func, 1000)
-        this.CanvasObj.beginPath() // 开始画画
+        this.drawFlag = window.requestAnimationFrame(func)
       }
     },
     reset () {
+      clearInterval(this.drawFlag)
       this.clearCanvas()
+    },
+    saveHeader () {
+      let dataUrl = this.$refs.myCanvas.toDataURL('image/png')
+      let file = this.dataURLtoFile(dataUrl, 'myHeader') // 头像
+      let data = new FormData()
+      data.append('photo', file)
+      this.$axios({
+        url: '/user/photo',
+        method: 'patch',
+        data
+      }).then(result => {
+        // 认为保存成功 => 通知header组件 更新信息
+        eventBus.$emit('updateUserInfo')
+      })
+    },
+    dataURLtoFile (dataurl, filename) { // 将base64转换为文件
+      var arr = dataurl.split(','); var mime = arr[0].match(/:(.*?);/)[1]
+      var bstr = atob(arr[1]); var n = bstr.length; var u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new File([u8arr], filename, { type: mime })
     }
 
   }
 }
 </script>
 
-<style>
-
+<style scoped>
+ .right {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   height: 100%;
+   margin-left: 20px;
+ }
+ .el-button {
+   margin:10px
+ }
 </style>

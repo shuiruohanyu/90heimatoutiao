@@ -142,9 +142,9 @@ export default {
           // 判断是修改还是发布文章
           let { articleId } = this.$route.params // 获取动态路由参数
           this.$axios({
-            url: articleId ? `/articles/${articleId}` : '/articles',
+            url: articleId ? `/articles/:articleId` : '/articles',
             method: articleId ? 'put' : 'post',
-            params: { draft }, // 查询参数
+            params: { draft, articleId }, // 查询参数
             data: this.formData // 请求体参数
           }).then(result => {
             this.$message({

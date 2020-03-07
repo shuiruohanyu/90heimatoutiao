@@ -35,9 +35,20 @@
           <el-form-item>
               <el-button @click="publishArticle()" type='primary'>发布</el-button>
               <el-button @click="publishArticle(true)">存入草稿</el-button>
+              <el-button @click="preview()">预览</el-button>
 
           </el-form-item>
       </el-form>
+      <el-dialog width="375px" :visible="dialogPreview" modal @close="dialogPreview=false">
+      <el-row type="flex" justify="center">
+        <div class="back">
+            <!-- 标题 -->
+          <div class="title">{{ formData.title }}</div>
+          <!-- 内容 -->
+          <div class="content" v-html="formData.content"></div>
+        </div>
+      </el-row>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -66,7 +77,8 @@ export default {
         }],
         content: [{ required: true, message: '文章内容不能为空' }],
         channel_id: [{ required: true, message: '文章频道不能为空' }]
-      }
+      },
+      dialogPreview: false // 预览
     }
   },
   // beforeRouteUpdate (to, from, next) {
@@ -103,6 +115,9 @@ export default {
     // }
   },
   methods: {
+    preview (obj) {
+      this.dialogPreview = true
+    },
     // 接收子组件数据
     receiveImg (url, index) {
       // 现在拿到的url地址 还要拿到下标
@@ -206,6 +221,46 @@ export default {
 }
 </script>
 
-<style>
+<style lang='less' scoped>
+ /deep/ .el-dialog {
+    background-color: transparent !important;
+    .el-dialog__headerbtn .el-dialog__close::before {
+      color:#fff
+    }
+  }
+  .back {
+    width: 375px;
+    height: 667px;
+    background-repeat: no-repeat;
+    border: 10px solid #000;
+    border-radius: 30px;
+    background-color: #fff;
+    overflow-x:hidden;
+    overflow-y: auto;
+      box-sizing: border-box;
 
+    .title {
+       font-size: 20px;
+       font-weight: bold;
+       padding:  20px;
+    }
+    .date {
+      font-size: 12px;
+      color: #999;
+      padding:  20px;
+    }
+    .content {
+      padding: 20px;
+      height: 80% ;
+       white-space: pre-wrap;
+    word-break: break-all;
+    /deep/ img{
+      max-width:100%;
+      background: #f9f9f9;
+    }
+    /deep/ code{
+      white-space: pre-wrap;
+    }
+    }
+  }
 </style>

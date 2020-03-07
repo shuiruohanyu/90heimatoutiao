@@ -1,84 +1,86 @@
 <template>
-  <el-card class='articles'>
-      <bread-crumb slot='header'>
-         <template slot='title'>文章列表</template>
-      </bread-crumb>
-      <!-- 表单容器 -->
-      <el-form style="padding-left:50px">
-          <el-form-item label="文章状态:">
-              <!-- 放置一个单选组  文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除，不传为全部-->
-              <!-- 第一种 用监听组件的形式去做搜索 -->
-                 <!-- <el-radio-group v-model="searchForm.status" @change="changeCondition">
+  <el-card class="articles">
+    <bread-crumb slot="header">
+      <template slot="title">文章列表</template>
+    </bread-crumb>
+    <!-- 表单容器 -->
+    <el-form style="padding-left:50px">
+      <el-form-item label="文章状态:">
+        <!-- 放置一个单选组  文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除，不传为全部-->
+        <!-- 第一种 用监听组件的形式去做搜索 -->
+        <!-- <el-radio-group v-model="searchForm.status" @change="changeCondition">
                   <el-radio :label="5">全部</el-radio>
                   <el-radio :label="0">草稿</el-radio>
                   <el-radio :label="1">待审核</el-radio>
                   <el-radio :label="2">审核通过</el-radio>
                   <el-radio :label="3">审核失败</el-radio>
-              </el-radio-group> -->
-              <el-radio-group v-model="searchForm.status" >
-                  <!-- label -->
-                  <el-radio :label="5">全部</el-radio>
-                  <el-radio :label="0">草稿</el-radio>
-                  <el-radio :label="1">待审核</el-radio>
-                  <el-radio :label="2">审核通过</el-radio>
-                  <el-radio :label="3">审核失败</el-radio>
-              </el-radio-group>
-          </el-form-item>
-          <el-form-item label="频道列表:">
-              <!-- 第一种 用监听组件的形式去做搜索 -->
-               <!-- <el-select @change="changeCondition" placeholder="请选择频道" v-model="searchForm.channel_id">
+        </el-radio-group>-->
+        <el-radio-group v-model="searchForm.status">
+          <!-- label -->
+          <el-radio :label="5">全部</el-radio>
+          <el-radio :label="0">草稿</el-radio>
+          <el-radio :label="1">待审核</el-radio>
+          <el-radio :label="2">审核通过</el-radio>
+          <el-radio :label="3">审核失败</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="频道列表:">
+        <!-- 第一种 用监听组件的形式去做搜索 -->
+        <!-- <el-select @change="changeCondition" placeholder="请选择频道" v-model="searchForm.channel_id">
                   <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
-              </el-select> -->
-              <el-select placeholder="请选择频道" v-model="searchForm.channel_id">
-                  <!-- el-option label是显示值 value是存储值 -->
-                  <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
-              </el-select>
-          </el-form-item>
-          <el-form-item label="时间选择:">
-              <!-- 日期选择器 日期范围-->
-              <!-- 第一种 用监听组件的形式去做搜索 -->
-            <!-- <el-date-picker @change="changeCondition" value-format="yyyy-MM-dd" v-model="searchForm.dateRange" type="daterange"></el-date-picker> -->
-              <el-date-picker  value-format="yyyy-MM-dd" v-model="searchForm.dateRange" type="daterange"></el-date-picker>
-          </el-form-item>
-      </el-form>
-      <el-row class='total' type='flex' align="middle">
-          <span>
-              共找到{{page.total}}条符合条件的内容
-          </span>
-      </el-row>
-      <div class='article-item' v-for="item in list" :key="item.id.toString()">
-          <!-- 左侧 -->
-          <div class='left'>
-              <img :src="item.cover.images.length ? item.cover.images[0] : defaultImg" alt="">
-              <div class='info'>
-                  <span>{{ item.title }}</span>
-                  <!-- 文章状态 0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除 -->
-                  <el-tag :type="item.status | filterType" class='tag'>{{ item.status | filterStatus }}</el-tag>
-                  <span class='date'>{{ item.pubdate }}</span>
-              </div>
-          </div>
-          <!-- 右侧 -->
-          <div class='right'>
-              <span @click="toModify(item.id)"><i class="el-icon-edit"></i>修改</span>
-              <!-- 注册删除按钮事件 -->
-              <span @click="delMaterial(item.id)"><i class="el-icon-delete"></i>删除</span>
-          </div>
-      </div>
-      <el-row type='flex' justify="center" align="middle" style="height:60px">
-          <el-pagination  background layout="prev, pager, next"
-          :total="page.total"
-          :current-page="page.currentPage"
-          :page-size="page.pageSize"
-          @current-change="changePage"
-          ></el-pagination>
-      </el-row>
-      <el-dialog  width="375px" :visible="true" modal   >
-        <div class='content'>
-            <div class='title'></div>
-             <div class='content'></div>
-
+        </el-select>-->
+        <el-select placeholder="请选择频道" v-model="searchForm.channel_id">
+          <!-- el-option label是显示值 value是存储值 -->
+          <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="时间选择:">
+        <!-- 日期选择器 日期范围-->
+        <!-- 第一种 用监听组件的形式去做搜索 -->
+        <!-- <el-date-picker @change="changeCondition" value-format="yyyy-MM-dd" v-model="searchForm.dateRange" type="daterange"></el-date-picker> -->
+        <el-date-picker value-format="yyyy-MM-dd" v-model="searchForm.dateRange" type="daterange"></el-date-picker>
+      </el-form-item>
+    </el-form>
+    <el-row class="total" type="flex" align="middle">
+      <span>共找到{{page.total}}条符合条件的内容</span>
+    </el-row>
+    <div class="article-item" v-for="item in list" :key="item.id.toString()">
+      <!-- 左侧 -->
+      <div class="left">
+        <img :src="item.cover.images.length ? item.cover.images[0] : defaultImg" alt />
+        <div class="info">
+          <span>{{ item.title }}</span>
+          <!-- 文章状态 0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除 -->
+          <el-tag :type="item.status | filterType" class="tag">{{ item.status | filterStatus }}</el-tag>
+          <span class="date">{{ item.pubdate }}</span>
         </div>
-      </el-dialog>
+      </div>
+      <!-- 右侧 -->
+      <div class="right">
+        <span @click="preview(item)">
+          <i class="el-icon-video-play"></i>预览
+        </span>
+
+        <span @click="toModify(item.id)">
+          <i class="el-icon-edit"></i>修改
+        </span>
+        <!-- 注册删除按钮事件 -->
+        <span @click="delMaterial(item.id)">
+          <i class="el-icon-delete"></i>删除
+        </span>
+      </div>
+    </div>
+    <el-row type="flex" justify="center" align="middle" style="height:60px">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="page.total"
+        :current-page="page.currentPage"
+        :page-size="page.pageSize"
+        @current-change="changePage"
+      ></el-pagination>
+    </el-row>
+
   </el-card>
 </template>
 
@@ -152,6 +154,11 @@ export default {
     }
   },
   methods: {
+    // 预览
+    preview (obj) {
+      this.previewObj = obj
+      this.dialogPreview = true
+    },
     // 去修改页面 => 实际上就是发布页面
     toModify (id) {
       this.$router.push(`/home/publish/${id.toString()}`)
@@ -184,14 +191,19 @@ export default {
       this.getConditionArticle() // 调用获取文章数据
     },
     getConditionArticle () {
-      debugger
       let params = {
         page: this.page.currentPage,
         per_page: this.page.pageSize,
         status: this.searchForm.status === 5 ? null : this.searchForm.status, // 因为5是前端定义的一个标识, 如果等于5 表示查全部, 全部应该什么都不传 直接传null
         channel_id: this.searchForm.channel_id,
-        begin_pubdate: this.searchForm.dateRange && this.searchForm.dateRange.length ? this.searchForm.dateRange[0] : null, // 开始时间
-        end_pubdate: this.searchForm.dateRange && this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null // 截止时间
+        begin_pubdate:
+          this.searchForm.dateRange && this.searchForm.dateRange.length
+            ? this.searchForm.dateRange[0]
+            : null, // 开始时间
+        end_pubdate:
+          this.searchForm.dateRange && this.searchForm.dateRange.length > 1
+            ? this.searchForm.dateRange[1]
+            : null // 截止时间
       }
       // 加上一个非空处理
       this.getArticles(params)
@@ -202,8 +214,8 @@ export default {
       this.channels = result.data.channels
     },
     // 获取文章列表数据
-    async  getArticles (params) {
-      let result = await getArticles() // 调用获取文章模块
+    async getArticles (params) {
+      let result = await getArticles(params) // 调用获取文章模块
       this.list = result.data.results // 获取文章列表数据
       this.page.total = result.data.total_count // 总数
     }
@@ -216,56 +228,68 @@ export default {
 </script>
 
 <style lang='less' scoped>
-  .articles {
-   /deep/ .el-dialog {
-      background-color: transparent !important;
+.articles {
+
+  .back {
+    width: 375px;
+    height: 667px;
+    background-repeat: no-repeat;
+    border: 10px solid #000;
+    border-radius: 30px;
+    background-color: #fff;
+    .title {
+       font-size: 20px;
+       font-weight: bold;
+       padding:  20px;
+    }
+    .date {
+      font-size: 12px;
+      color: #999;
+      padding:  20px;
     }
     .content {
-      background-image: url('../../assets/img/wap-preview.png');
-      width: 375px;
-      height: 600px;
-      background-size: contain;
-      background-repeat: no-repeat;
+      padding: 20px;
     }
-      .total {
-          height: 60px;
-          border-bottom: 1px dashed #ccc;
-      }
-      .article-item {
-          display: flex;
-          justify-content: space-between;
-          padding: 20px 0;
-          border-bottom: 1px solid #f2f3f5;
-          .left {
-              display: flex;
-              img {
-                  width: 180px;
-                  height: 100px;
-                  border-radius: 4px;
-              }
-              .info {
-                  height: 100px;
-                  margin-left: 10px;
-                  display: flex;
-                  flex-direction: column;
-                  justify-content: space-around;
-                  .date {
-                      color: #999;
-                      font-size:12px;
-                  }
-                  .tag {
-                      text-align: center;
-                      width:60px;
-                  }
-              }
-          }
-          .right {
-              span {
-                  font-size:14px;
-                  margin-right: 8px;
-                  cursor: pointer;
-              }
-          }
-      }
   }
+  .total {
+    height: 60px;
+    border-bottom: 1px dashed #ccc;
+  }
+  .article-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid #f2f3f5;
+    .left {
+      display: flex;
+      img {
+        width: 180px;
+        height: 100px;
+        border-radius: 4px;
+      }
+      .info {
+        height: 100px;
+        margin-left: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        .date {
+          color: #999;
+          font-size: 12px;
+        }
+        .tag {
+          text-align: center;
+          width: 60px;
+        }
+      }
+    }
+    .right {
+      span {
+        font-size: 14px;
+        margin-right: 8px;
+        cursor: pointer;
+      }
+    }
+  }
+}
 </style>

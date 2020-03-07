@@ -6,14 +6,15 @@
     <div class='right'>
      <el-button size="mini" @click="drawLine">直线</el-button>
      <el-button size="mini" @click="drawCurve">曲线</el-button>
-     <el-button size="mini" >圆</el-button>
-     <el-button size="mini" >矩形</el-button>
-     <el-button size="mini" >画笔</el-button>
-     <el-button size="mini" @click="review" >动画</el-button>
+     <el-button size="mini" @click="drawArc">圆</el-button>
+
+     <el-button size="mini" @click="drawRect">矩形</el-button>
+     <el-button size="mini" @click="drawBall">抛物线</el-button>
+     <el-button size="mini" @click="review" >签字动画</el-button>
      <el-button size="mini" @click="reset" >擦除</el-button>
      <el-button size="mini" @click="saveHeader">变成头像</el-button>
     </div>
-
+     <img ref="myBall" style='display:none' src="../../assets/img/ball.jpg" alt="">
  </el-row>
 </template>
 
@@ -26,13 +27,66 @@ export default {
       pointX: 0, // 起始坐标点X
       pointY: 0, //  其实坐标点Y
       isDraw: false, // 是否已经开始画画
-      list: []
+      list: [],
+      size: 1, // 比例
+      width: 448,
+      height: 360
     }
   },
   mounted () {
     this.CanvasObj = this.$refs.myCanvas.getContext('2d') // 画布对象
   },
   methods: {
+    // 抛物线
+    drawBall () {
+      let startX = 0
+      let startY = 0
+      let time = 0
+      let func = () => {
+        if (startY < this.height) {
+          startY = 9.8 / 2 * time * time
+          startX = 30 * time
+
+          this.clearCanvas()
+          this.CanvasObj.beginPath()
+          this.CanvasObj.drawImage(this.$refs.myBall, startX, startY, 40, 40)
+          this.CanvasObj.stroke()
+          this.CanvasObj.closePath()
+          time += 0.1
+
+          window.requestAnimationFrame(func)
+        }
+      }
+      window.requestAnimationFrame(func)
+    },
+    // 画矩形
+    drawRect () {
+      let startX = 10
+      let startY = 10
+      this.CanvasObj.beginPath()
+      this.CanvasObj.rect(startX, startY, 200, 200)
+      this.CanvasObj.stroke()
+      this.CanvasObj.closePath()
+    },
+    // 画圆
+    drawArc () {
+      //  公式
+      let startX = 224
+      let startY = 180
+      let index = 0.01
+      let func = () => {
+        if (index <= 2.01) {
+          this.clearCanvas()
+          this.CanvasObj.beginPath()
+          this.CanvasObj.arc(startX, startY, 150, 0, index * Math.PI, false)
+          this.CanvasObj.stroke()
+          this.CanvasObj.closePath()
+          index += 0.01
+          window.requestAnimationFrame(func)
+        }
+      }
+      window.requestAnimationFrame(func)
+    },
     drawLine () {
       window.cancelAnimationFrame(this.loadingAnimate)
 
@@ -70,7 +124,7 @@ export default {
     //  清空画布
     clearCanvas () {
       this.CanvasObj.fillStyle = '#fff'
-      this.CanvasObj.fillRect(0, 0, '500', '400')
+      this.CanvasObj.fillRect(0, 0, '448', '360')
     },
     // 开始下笔
     beginDraw (event) {

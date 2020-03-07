@@ -72,6 +72,13 @@
           @current-change="changePage"
           ></el-pagination>
       </el-row>
+      <el-dialog  width="375px" :visible="true" modal   >
+        <div class='content'>
+            <div class='title'></div>
+             <div class='content'></div>
+
+        </div>
+      </el-dialog>
   </el-card>
 </template>
 
@@ -93,6 +100,7 @@ export default {
       channels: [], // 接收频道数据
       list: [],
       defaultImg: require('../../assets/img/default.jpg'), // 默认图片
+      backImg: require('../../assets/img/wap-preview.png'),
       page: {
         currentPage: 1,
         pageSize: 10, // 黑马头条后端限制 最低10条 => 文章列表
@@ -209,6 +217,16 @@ export default {
 
 <style lang='less' scoped>
   .articles {
+   /deep/ .el-dialog {
+      background-color: transparent !important;
+    }
+    .content {
+      background-image: url('../../assets/img/wap-preview.png');
+      width: 375px;
+      height: 600px;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
       .total {
           height: 60px;
           border-bottom: 1px dashed #ccc;

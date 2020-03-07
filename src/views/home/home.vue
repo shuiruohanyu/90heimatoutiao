@@ -1,5 +1,8 @@
 <template>
+<div>
+   <el-calendar class='main'></el-calendar>
  <WriteCard />
+</div>
 </template>
 
 <script>
@@ -12,8 +15,14 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang='less' scoped>
+  .main {
+    width: 300px;
+    height: 100px;
+   /deep/ .el-calendar-day {
+      height: auto;
+    }
+  }
   .el-carousel__item:nth-child(2n) {
     background-color: #99a9bf;
   }

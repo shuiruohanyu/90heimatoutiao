@@ -70,13 +70,13 @@ export default {
       },
       publishRules: {
         //   校验规则 title/content/channel_id 必填项
-        title: [{ required: true, message: '文章标题不能为空' }, {
+        title: [{ required: true, message: '文章标题不能为空', trigger: 'blur' }, {
           min: 5,
           max: 30,
           message: '标题的长度在5到30个字符之间'
         }],
-        content: [{ required: true, message: '文章内容不能为空' }],
-        channel_id: [{ required: true, message: '文章频道不能为空' }]
+        content: [{ required: true, message: '文章内容不能为空', trigger: 'blur' }],
+        channel_id: [{ required: true, message: '文章频道不能为空', trigger: 'blur' }]
       },
       dialogPreview: false // 预览
     }

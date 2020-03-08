@@ -31,10 +31,7 @@ const routes = [
       path: 'articles', // 文章列表
       component: () => import('../views/articles')
     }, {
-      path: 'publish', // 发布文章
-      component: () => import('../views/publish')
-    }, {
-      path: 'publish/:articleId', // 修改文章
+      path: 'publish/:articleId?', // 修改文章
       component: () => import('../views/publish')
     }, {
       path: 'account',

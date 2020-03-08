@@ -61,7 +61,7 @@
           <i class="el-icon-video-play"></i>预览
         </span>
 
-        <span @click="toModify(item.id)">
+        <span @click="$router.push(`/home/publish/${item.id.toString()}`)">
           <i class="el-icon-edit"></i>修改
         </span>
         <!-- 注册删除按钮事件 -->

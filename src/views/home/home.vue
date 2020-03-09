@@ -2,6 +2,7 @@
 <div>
    <el-calendar class='main'></el-calendar>
  <WriteCard />
+ <StarRain />
 </div>
 </template>
 
